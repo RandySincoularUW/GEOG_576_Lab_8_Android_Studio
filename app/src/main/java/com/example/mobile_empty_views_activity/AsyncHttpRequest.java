@@ -46,22 +46,13 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
         JSONArray arr = null;
         JSONArray flightArray = null;  // 13-May-23
 
-        // HttpClient client = new DefaultHttpClient();
-
-        // add 13-May-23 to deal with exception and the variable 'str' not being in scope
         String str = null;
 
         System.out.println("*** AsyncHttpRequest: in doInBackground() ...");
 
         try {
-            // 15-May-23 comment out
-            // HttpRequestBase req;
-
 
             System.out.println("*** AsyncHttpRequest: in doInBackground()  HttpGet request() ...");
-
-            // 15-May-23 comment out
-            // req = new HttpGet(params[0]); // in this case, params[0] is URL
 
             // 15-May-23 add
             URL flightObject = new URL(params[0]);
@@ -73,12 +64,6 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
             System.out.println("*** AsynchHttpRequest.java doInBackground() GET Response Code: " + responseCode);
 
             System.out.println("*** AsyncHttpRequest: in doInBackground()  Executing request() ...");
-
-            // 15-May-23 comment out
-            // HttpResponse response = client.execute(req);
-
-            // 15-May-23 comment out
-            // byte[] result = EntityUtils.toByteArray(response.getEntity());
 
             // 15-May-23
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -103,19 +88,9 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
                 System.out.println("*** AsyncHttpRequest.java response: POST Request did not work");
 
             }
-            //* Result of HttpRequest
-            //* ---------------------
-            // 13-May-23
-            // String str = new String(result, "UTF-8");
 
-
-            // 15-May-23 comment out
-            // str = new String(result, "UTF-8");
 
             System.out.println("*** AsyncHttpRequest: in doInBackground() length: " + str.length() + " result: " + str );
-
-            // Convert Request String to an Array 'arr'
-            // arr = new JSONArray(str);
 
 
         } catch (UnsupportedEncodingException e) {
@@ -158,8 +133,6 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
 
         }
 
-        System.out.println("*** AsyncHttpRequest: in doInBackground(). Ready to return 'array2' array ....");
-
         if (flightArray == null) {
             System.out.println("*** AsyncHttpRequest: in doInBackground() .returning 'flightArray' array 'flightArray is NULL!' ...");
         }
@@ -168,24 +141,15 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
         }
 
 
-        // Return 'arr' to onPostExecute()
-        // return arr;
         return flightArray;
 
     }  // end doinBackground()
-
-
-    // ++++++++++++ 15-May-23 Original. Need to get around the deprecated code ++++++++
-    // Changed the name to: doInBackground2
 
 
     @Override
     // ------------------------------------------------------------
     // This method is called after doInBackground method completes
     // ------------------------------------------------------------
-
-    // 16-May-23 Modified to not use the filter methods
-    //
 
     protected void onPostExecute(JSONArray jsonArray) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -195,8 +159,6 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
         }
 
         System.out.println("*** AsyncHttpRequest: in onPostExecute() ...");
-
-        // filterSightings changed to: filterFlights
 
         if (jsonArray == null) {
             System.out.println("*** AsyncHttpRequest: in onPostExecute() jsonArray is NULL ...");
@@ -210,12 +172,7 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
             // 16-May-23 Don't need this
             System.out.println("*** AsyncHttpRequest: in onPostExecute() calling filterFlights ...");
 
-            // JSONArray filteredFlights = mapFilters.filterFlights(jsonArray);
-
             System.out.println("*** AsyncHttpRequest: in onPostExecute() looping through flights. Length: " + jsonArray.length());
-
-            // 16-May-23
-            // changed filteredFlights to: jsonArray
 
             for (int i = 0 ; i < jsonArray.length(); i++) {
                 try {
@@ -270,94 +227,7 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
 
     } //end onPostExecute()
 
-    // ----------------- end 16-may-23 changes
-
-
-    // 16-May-23 Don't need to call the filter methods
-    /*
-    protected void onPostExecute2(JSONArray jsonArray) {
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-        if (mMap != null) {
-            mMap.clear();
-        }
-
-        System.out.println("*** AsyncHttpRequest: in onPostExecute() ...");
-
-        // filterSightings changed to: filterFlights
-
-        if (jsonArray == null) {
-            System.out.println("*** AsyncHttpRequest: in onPostExecute() jsonArray is NULL ...");
-        }
-        else {
-            System.out.println("*** AsyncHttpRequest: in onPostExecute() jsonArray is Not Null ... +++++++++");
-        }
-
-        if (jsonArray != null) {
-
-            // 16-May-23 Don't need this
-            System.out.println("*** AsyncHttpRequest: in onPostExecute() calling filterFlights ...");
-
-            // JSONArray filteredFlights = mapFilters.filterFlights(jsonArray);
-
-            System.out.println("*** AsyncHttpRequest: in onPostExecute() looping through flights. Length: " + filteredFlights.length());
-
-            for (int i = 0 ; i < filteredFlights.length(); i++) {
-                try {
-                    JSONObject flight = filteredFlights.getJSONObject(i);
-                    Double lng = Double.parseDouble(flight.getString("lng"));
-                    Double lat = Double.parseDouble(flight.getString("lat"));
-
-                    System.out.println("*** AsyncHttpRequest: in onPostExecute(). lng: " + lng + " lat: " + lat);
-
-                    LatLng latlng = new LatLng(lat, lng);
-                    builder.include(latlng);
-
-                    // Flight Details
-                    String regNumber = flight.getString("reg_number");
-                    String airline = flight.getString("airline_icao");
-                    String speed = flight.getString("speed");
-                    String aircraftType = flight.getString("aircraft_icao");
-
-                    System.out.println("*** AsyncHttpRequest: in onPostExecute() adding markers to map ...");
-
-                    android.util.Log.v("** AsyncHttpRequest()"," onPostExecute() lat/lng: " + latlng.toString() + " reg_number: " + regNumber);
-
-
-                    //* Add Marker to Map
-
-                    /*
-                    mMap.addMarker(new MarkerOptions().position(latlng)
-                                    .title(aircraftType.toUpperCase())
-                                    // Icon
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.damage_icon))
-                                    .snippet("Aircraft Speed: " + speed));
-                    */
-/*
-                    mMap.addMarker(new MarkerOptions().position(latlng)
-                            .title(flight.getString("reg_number"))
-                            .snippet(
-                                    flight.getString("aircraft_icao") + " is "
-                                            + flight.getString("status") + " from "
-                                            + flight.getString("dep_iata") + " to "
-                                            + flight.getString("arr_iata") + " at speed of "
-                                            + flight.getString("speed")
-                            )
-                    );
-
-                } catch (JSONException e) {
-                    android.util.Log.v("INFO", e.toString());
-                }
-            }
-
-            // 16-May-23 Don't need this
-            // mapFilters.updateOptions(jsonArray);
-        }
-
-    } //end onPostExecute()
-*/
-
-    public void setGoogleMap(GoogleMap mMap) {
+     public void setGoogleMap(GoogleMap mMap) {
         System.out.println("*** AsyncHttpRequest: in setGoogleMap() ...");
 
         this.mMap = mMap;
@@ -368,11 +238,4 @@ public class AsyncHttpRequest extends AsyncTask<String, Void, JSONArray> {
         this.mData = mData;
     }
 
-    /* 16-May-23 Don't need this
-    public void setMapFilters(MapFilters mapFilters) {
-        System.out.println("*** AsyncHttpRequest: in setMapFilters() ...");
-
-        this.mapFilters = mapFilters;
-    }
-*/
 } // end class

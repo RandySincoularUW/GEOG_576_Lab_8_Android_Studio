@@ -17,7 +17,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    // private MapFilters mapFilters; // 16-may-23
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +33,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         android.util.Log.v("INFO", "*** MapsActivity.java. onCreate()");
 
         System.out.println("*** MapsActivity.java: onCreate(), calling MapFilters() ....  **");
-
-        // 16-may-23
-        // mapFilters = new MapFilters();
 
     }
 
@@ -61,27 +57,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        //* Copy the following code from: MainActivity in older project
-        //* -----------------------------------------------------------
-
         System.out.println("*** MapsActivity.java: onMapReady()  **++++++++++++++++++++++++++++++");
-
-        HashMap<String, String> data = new HashMap<String, String>();
-        data.put("tab_id", "1");
-
-        //* Need to change to 'googleMap'
-        // AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data,googleMap);
 
         AsyncHttpRequest asyncHttpRequest = new AsyncHttpRequest();
 
         asyncHttpRequest.setGoogleMap(googleMap);
-        // 16-may-23
-        // asyncHttpRequest.setMapFilters(mapFilters);
 
         System.out.println("*** MapsActivity.java: onMapReady() executing asyncHttpRequest ...  **");
-
-        // Get Location
-        // mMap.getMyLocation();
 
         // ***************************************************
         // 13-Nov-20 Add for troubleshooting
@@ -89,9 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // ***************************************************
         try {
 
-            // this works
-            // asyncHttpRequest.execute("http://34.199.78.131:8000/hello");
-
+            // This URL must match the AWS Elastic IP Address of the EC2 Instance
             asyncHttpRequest.execute("http://34.199.78.131:8000/flights/msn");
 
             System.out.println("*** MapsActivity.java: onMapReady() ...  execute completed...  **");
